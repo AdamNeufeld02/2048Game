@@ -46,8 +46,7 @@ public class CellTest {
         cell.setValue(128);
         cell2.setValue(128);
 
-        cell.mergeCells(cell2);
-
+        assertEquals(256, cell.mergeCells(cell2));
         assertEquals(0, cell.getValue());
         assertEquals(256, cell2.getValue());
     }

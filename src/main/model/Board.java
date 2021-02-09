@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Board {
-    private ArrayList<Cell> cells;
-    private int size;
+    private ArrayList<Cell> cells;      // The list of all cells within a board.
+    private int size;                   // The size of one side of the board. All boards are perfect squares.
 
     public Board() {
         cells = new ArrayList<>();
@@ -16,6 +16,16 @@ public class Board {
     // Getters
     public int getSize() {
         return size;
+    }
+
+    // EFFECTS: Returns the row the given index is in
+    public int getRow(int index) {
+        return index / size;
+    }
+
+    // EFFECTS: returns the column the given index is in
+    public int getColumn(int index) {
+        return index % size;
     }
 
     // REQUIRES: index must be less than the length of cells
@@ -68,18 +78,41 @@ public class Board {
         Collections.swap(cells, index1, index2);
     }
 
+    // REQUIRES: Both indexes must be within the range of the board
+    // MODIFIES: this
+    // EFFECTS: Merges the two cells at the given indexes and returns the value as an int
+    public int mergeCells(int index1, int index2) {
+        Cell cell1 = getCellAt(index1);
+        Cell cell2 = getCellAt(index2);
+        return  cell1.mergeCells(cell2);
+    }
+
+    // EFFECTS: Returns true if both index are within the same row on the board
+    public Boolean checkRow(int index1, int index2) {
+        return getRow(index1) == getRow(index2);
+    }
+
+    // EFFECTS: Returns true if both index are within the same column on the board
+    public Boolean checkColumn(int index1, int index2) {
+        return getColumn(index1) == getColumn(index2);
+    }
+
+    // EFFECTS: returns true if the given index is in the bounds of the board.
+    public Boolean inBounds(int index) {
+        return index >= 0 && index < size * size;
+    }
+
     // REQUIRES: size > 0
     // MODIFIES: this
     // EFFECTS: Adds or removes cells until the board contains enough to fill a board of the correct size
     private void initializeBoard() {
         if (cells.size() > size * size) {
             removeCells();
-        } else if (cells.size() < size * size) {
+        } else  {
             addCells();
         }
     }
 
-    // REQUIRES: this.size * this.size < cells.size()
     // MODIFIES: this
     // EFFECTS: removes cells until the board is of correct size according to the field.
     private void removeCells() {
@@ -88,7 +121,6 @@ public class Board {
         }
     }
 
-    // REQUIRES: this.size * this.size > cells.size()
     // MODIFIES: this
     // EFFECTS: adds cells until the board is of correct size according to the field.
     private void addCells() {

@@ -95,4 +95,63 @@ public class BoardTest {
         assertEquals(13, emptyCells.size());
     }
 
+    @Test
+    public void testGetRow() {
+        board.setSize(5);
+        for (int c = 0; c < 5; c++) {
+            for (int r = 0; r < 5; r++) {
+                assertEquals(c, board.getRow(c * 5 + r));
+            }
+        }
+    }
+
+    @Test
+    public void testGetColumn() {
+        board.setSize(5);
+        for (int r = 0; r < 5; r++) {
+            for (int c = 0; c < 5; c++) {
+                assertEquals(c, board.getColumn(r * 5 + c));
+            }
+        }
+    }
+
+    @Test
+    public void testCheckRow() {
+        board.setSize(5);
+        assertFalse(board.checkRow(3, 12));
+        assertTrue(board.checkRow(5, 9));
+    }
+
+    @Test
+    public void testCheckColumn() {
+        board.setSize(5);
+        assertFalse(board.checkColumn(1, 24));
+        assertTrue(board.checkColumn(3, 23));
+    }
+
+    @Test
+    public void testMergeCells() {
+        Cell cell1 = board.getCellAt(0);
+        Cell cell2 = board.getCellAt(1);
+
+        cell1.setValue(4);
+        cell2.setValue(4);
+        assertEquals(8, board.mergeCells(0, 1));
+
+        assertEquals(0, cell1.getValue());
+        assertEquals(8, cell2.getValue());
+    }
+
+    @Test
+    public void testInBounds() {
+        assertFalse(board.inBounds(-1));
+        assertTrue(board.inBounds(0));
+        assertTrue(board.inBounds(15));
+        assertFalse(board.inBounds(16));
+
+        board.setSize(5);
+
+        assertTrue(board.inBounds(24));
+        assertFalse(board.inBounds(25));
+    }
 }

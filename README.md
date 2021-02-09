@@ -17,7 +17,7 @@ goal (Usually the number 2048) or when you have no more possible moves to make.
 
 **Who will use it?**
 
-Anyone looking to play a relaxing easy to learn game.
+Anyone looking to play a relaxing easy to play game.
 
 **Why is this project of interest to me?**
 

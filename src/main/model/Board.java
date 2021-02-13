@@ -3,8 +3,9 @@ package model;
 import java.util.ArrayList;
 import java.util.Collections;
 
+// Represents a square board of side length size. Each cell contains a value all initialized to be empty.
 public class Board {
-    private ArrayList<Cell> cells;      // The list of all cells within a board.
+    protected ArrayList<Cell> cells;      // The list of all cells within a board.
     private int size;                   // The size of one side of the board. All boards are perfect squares.
 
     public Board() {

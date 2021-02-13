@@ -1,9 +1,10 @@
 package ui;
 
 import model.Board;
+import model.NumberMergeGame;
 
 public class Main {
     public static void main(String[] args) {
-        Board board = new Board();
+        NumberMergeGameApp gameApp = new NumberMergeGameApp();
     }
 }

@@ -21,6 +21,7 @@ Anyone looking to play a relaxing easy to play game.
 
 **Why is this project of interest to me?**
 
+I have played this game before and am interested in what it would take to make. It seems like a fun project to complete.
 
 ## User Stories
 - As a user, I want to be able to add cells to the board and customize its size before starting.

@@ -9,12 +9,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GameTest {
-    private Game game;
+public class NumberMergeGameTest {
+    private NumberMergeGame game;
 
     @BeforeEach
     public void setup() {
-        game = new Game();
+        game = new NumberMergeGame();
+    }
+
+    @Test
+    public void testGetGoal() {
+        assertEquals(2048, game.getGoal());
+
+        game.setGoal(4096);
+
+        assertEquals(4096, game.getGoal());
     }
 
     @Test
@@ -209,5 +218,61 @@ public class GameTest {
         assertEquals(2, cell.getValue());
         cell = board.getCellAt(15);
         assertEquals(8, cell.getValue());
+    }
+
+    @Test
+    public void testMoveRightNoSpace() {
+        Board board = game.getBoard();
+        board.setSize(5);
+
+        for (int i = 0; i < 5; i ++) {
+            board.setCell(i, i);
+        }
+        game.moveRight();
+
+        assertEquals(0, game.getScore());
+        assertEquals(0, game.getMoves());
+    }
+
+    @Test
+    public void testMoveLeftNoSpace() {
+        Board board = game.getBoard();
+        board.setSize(5);
+
+        for (int i = 0; i < 5; i ++) {
+            board.setCell(i, i + 1);
+        }
+        game.moveLeft();
+
+        assertEquals(0, game.getScore());
+        assertEquals(0, game.getMoves());
+    }
+
+    @Test
+    public void testMoveUpNoSpace() {
+        Board board = game.getBoard();
+        board.setSize(5);
+
+        for (int i = 0; i < 5; i ++) {
+            board.setCell(i * 5, i + 1);
+        }
+        game.moveUp();
+
+        assertEquals(0, game.getScore());
+        assertEquals(0, game.getMoves());
+    }
+
+    @Test
+    public void testMoveDownNoSpace() {
+        Board board = game.getBoard();
+        board.setSize(5);
+
+        for (int i = 0; i < 5; i ++) {
+            board.setCell(i * 5, i + 1);
+        }
+        game.moveDown();
+
+        assertEquals(0, game.getScore());
+        assertEquals(0, game.getMoves());
     }
 }

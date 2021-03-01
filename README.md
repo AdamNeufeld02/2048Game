@@ -29,3 +29,5 @@ I have played this game before and am interested in what it would take to make. 
 - As a user, I want to be able to execute moves within the game.
 - As a user, I want to be able to view my current score in the game.
 - As a user, I want to be able to view the number of moves I have made in the game.
+- As a user, I want to be able to save my current game.
+- As a user, I want to be able to load my previous game.

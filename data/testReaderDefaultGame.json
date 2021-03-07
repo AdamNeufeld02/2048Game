@@ -1,0 +1,26 @@
+{
+    "score": 0,
+    "goal": 2048,
+    "moves": 0,
+    "board": {
+        "cells": [
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0}
+        ],
+        "size": 4
+    }
+}

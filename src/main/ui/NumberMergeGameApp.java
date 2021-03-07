@@ -1,42 +1,57 @@
 package ui;
 
 
+import java.io.IOException;
 import java.util.Scanner;
 import model.Board;
 import model.Cell;
 import model.NumberMergeGame;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
 public class NumberMergeGameApp {
 
+    private static final String JSON_STORE = "./data/game.json";
     private NumberMergeGame game;
     private Scanner input;
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
 
     // MODIFIES: this
     // EFFECTS: Starts the game and initializes fields.
     public NumberMergeGameApp() {
         game = new NumberMergeGame();
         input = new Scanner(System.in);
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
         setupGame();
     }
 
     // EFFECTS: Provides an interface for the user to customize their game.
     public void setupGame() {
         String choice = "";
-        while (!choice.equals("Start")) {
+        while (!choice.equals("q")) {
             System.out.println("Would you like to:");
             System.out.println("\t - Customize Board (b)");
             System.out.println("\t - Change the goal (g)");
-            System.out.println("\t - Start the game (Start)");
+            System.out.println("\t - Load a game (l)");
+            System.out.println("\t - Start a new game (Start)");
+            System.out.println("\t - Quit (q)");
 
             choice = input.nextLine();
+            choice = choice.toLowerCase();
 
             if (choice.equals("b")) {
                 customizeBoard();
             } else if (choice.equals("g")) {
                 changeGoal();
+            } else if (choice.equals("l")) {
+                loadGame();
+            } else if (choice.equals("start")) {
+                playGame();
             }
         }
-        playGame();
+
     }
 
     // MODIFIES: this
@@ -96,7 +111,9 @@ public class NumberMergeGameApp {
         printBoard(board);
 
         while (true) {
-            nextTurn();
+            if (!nextTurn()) {
+                break;
+            }
 
             printScoreBoard();
             printBoard(board);
@@ -113,22 +130,31 @@ public class NumberMergeGameApp {
     }
 
     // MODIFIES: this
-    // EFFECTS: Allows the user to make a move to change the board.
-    public void nextTurn() {
+    // EFFECTS: Allows the user to make a move to change the board. Returns true if the user doesn't want to quit
+    //          else returns false.
+    public boolean nextTurn() {
         String move;
-        System.out.println("Next Move:");
+        System.out.println("Next Move or Quit(q):");
         move = input.nextLine();
 
         if (move.equals("r")) {
             game.moveRight();
+            return true;
         } else if (move.equals("l")) {
             game.moveLeft();
+            return true;
         } else if (move.equals("u")) {
             game.moveUp();
+            return true;
         } else if (move.equals("d")) {
             game.moveDown();
+            return true;
+        } else if (move.equals("q")) {
+            quitGame();
+            return false;
         } else {
             System.out.println("Invalid move");
+            return true;
         }
     }
 
@@ -196,5 +222,40 @@ public class NumberMergeGameApp {
         System.out.println("\n\n______________________________");
         System.out.printf("%-15s %15s", "|Score: " + score, "Moves: " + moves + "|\n");
         System.out.println("------------------------------");
+    }
+
+    // EFFECTS: Quits the game and offers to save the game for the player.
+    public void quitGame() {
+        String choice;
+        System.out.println("Would you like to save the game (y/n)? (All unsaved progress will be lost)");
+        choice = input.nextLine();
+        choice = choice.toLowerCase();
+        if (choice.equals("y")) {
+            saveGame();
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Loads the game from file
+    public void loadGame() {
+        try {
+            game = jsonReader.read();
+            System.out.println("Loaded game from " + JSON_STORE);
+            playGame();
+        } catch (IOException e) {
+            System.out.println("Unable to read from file " + JSON_STORE);
+        }
+    }
+
+    // EFFECTS: Saves the game to file
+    public void saveGame() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(game);
+            jsonWriter.close();
+            System.out.println("Saved game to " + JSON_STORE);
+        } catch (IOException e) {
+            System.out.println("Unable to save game to " + JSON_STORE);
+        }
     }
 }

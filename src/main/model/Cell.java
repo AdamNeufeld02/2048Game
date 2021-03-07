@@ -1,5 +1,8 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 // Class representation of a single cell in a game. The value of a cell is always 2 or greater.
 // A cell with a value of 0 is considered empty.
 public class Cell {
@@ -38,5 +41,12 @@ public class Cell {
     // EFFECTS: Returns true if the cell is empty.
     public Boolean isEmpty() {
         return value == 0;
+    }
+
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("value", value);
+
+        return json;
     }
 }

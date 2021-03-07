@@ -1,0 +1,19 @@
+{
+    "score": 64,
+    "goal": 1024,
+    "moves": 10,
+    "board": {
+        "cells": [
+            {"value": 1},
+            {"value": 2},
+            {"value": 3},
+            {"value": 4},
+            {"value": 5},
+            {"value": 6},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0}
+        ],
+        "size": 3
+    }
+}

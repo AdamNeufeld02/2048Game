@@ -1,5 +1,7 @@
 package model;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -12,6 +14,7 @@ public class NumberMergeGame {
     private int moves;          // Number of moves that have happened since the start of the game
     private int goal;           // The goal to reach with in the game
 
+    // EFFECTS: Constructs a new game with zero score and mores and a default goal of 2048.
     public NumberMergeGame() {
         board = new Board();
         score = 0;
@@ -39,6 +42,14 @@ public class NumberMergeGame {
     // setters
     public void setGoal(int goal) {
         this.goal = goal;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void setMoves(int moves) {
+        this.moves = moves;
     }
 
     // MODIFIES: this
@@ -168,6 +179,17 @@ public class NumberMergeGame {
         } else {
             return false;
         }
+    }
+
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("goal", goal);
+        json.put("score", score);
+        json.put("moves", moves);
+
+        json.put("board", board.toJson());
+
+        return json;
     }
 
     // REQUIRES row < board.size()

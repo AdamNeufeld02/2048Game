@@ -1,13 +1,17 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
 // Represents a square board of side length size. Each cell contains a value all initialized to be empty.
 public class Board {
-    protected ArrayList<Cell> cells;      // The list of all cells within a board.
+    private ArrayList<Cell> cells;      // The list of all cells within a board.
     private int size;                   // The size of one side of the board. All boards are perfect squares.
 
+    // EFFECTS: Constructs a new board of size 4.
     public Board() {
         cells = new ArrayList<>();
         size = 4;
@@ -101,6 +105,19 @@ public class Board {
     // EFFECTS: returns true if the given index is in the bounds of the board.
     public Boolean inBounds(int index) {
         return index >= 0 && index < size * size;
+    }
+
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        json.put("size", size);
+        for (Cell c : cells) {
+            jsonArray.put(c.toJson());
+        }
+
+        json.put("cells", jsonArray);
+
+        return json;
     }
 
     // REQUIRES: size > 0

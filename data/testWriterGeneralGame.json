@@ -1,0 +1,35 @@
+{
+    "score": 200,
+    "goal": 4096,
+    "moves": 10,
+    "board": {
+        "cells": [
+            {"value": 1},
+            {"value": 2},
+            {"value": 3},
+            {"value": 4},
+            {"value": 5},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0},
+            {"value": 0}
+        ],
+        "size": 5
+    }
+}

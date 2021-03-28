@@ -1,250 +1,90 @@
 package ui;
 
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
-import java.util.Scanner;
-import model.Board;
-import model.Cell;
 import model.NumberMergeGame;
-import persistence.JsonReader;
 import persistence.JsonWriter;
 
-public class NumberMergeGameApp {
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
-    private static final String JSON_STORE = "./data/game.json";
+import javax.swing.*;
+
+
+// The NumberMergeGame Ui includes a main menu and a game frame.
+public class NumberMergeGameApp extends JFrame {
+
+    public static final String JSON_STORE = "./data/game.json";
     private NumberMergeGame game;
-    private Scanner input;
     private JsonWriter jsonWriter;
-    private JsonReader jsonReader;
+    private GamePanel gamePanel;
+    private ScorePanel scorePanel;
+    private JMenu menu;
+    private JMenuBar mb;
+    private JMenuItem save;
+    private MainMenu mainMenu;
 
     // MODIFIES: this
     // EFFECTS: Starts the game and initializes fields.
     public NumberMergeGameApp() {
+        super("2048");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         game = new NumberMergeGame();
-        input = new Scanner(System.in);
         jsonWriter = new JsonWriter(JSON_STORE);
-        jsonReader = new JsonReader(JSON_STORE);
-        setupGame();
+        mainMenu = new MainMenu(this);
+        mainMenu.setVisible(true);
+        addKeyListener(new KeyHandler());
     }
 
-    // EFFECTS: Provides an interface for the user to customize their game.
-    public void setupGame() {
-        String choice = "";
-        while (!choice.equals("q")) {
-            System.out.println("Would you like to:");
-            System.out.println("\t - Customize Board (b)");
-            System.out.println("\t - Change the goal (g)");
-            System.out.println("\t - Load a game (l)");
-            System.out.println("\t - Start a new game (Start)");
-            System.out.println("\t - Quit (q)");
+    public void setGame(NumberMergeGame game) {
+        this.game = game;
+    }
 
-            choice = input.nextLine();
-            choice = choice.toLowerCase();
-
-            if (choice.equals("b")) {
-                customizeBoard();
-            } else if (choice.equals("g")) {
-                changeGoal();
-            } else if (choice.equals("l")) {
-                loadGame();
-            } else if (choice.equals("start")) {
-                playGame();
-            }
-        }
-
+    public NumberMergeGame getGame() {
+        return game;
     }
 
     // MODIFIES: this
-    // EFFECTS: Allows the user to change the size of their board.
-    public void customizeBoard() {
-        Board board = game.getBoard();
-        String choice;
-        int size;
-        int newSize;
+    // EFFECTS: Initializes the game frame to the chosen size and adds all components
+    public void initializeGameFrame() {
+        gamePanel = new GamePanel(game);
+        scorePanel = new ScorePanel(game);
+        menu = new JMenu("Menu");
+        mb = new JMenuBar();
+        save = new JMenuItem("Save");
+        menu.add(save);
+        mb.add(menu);
+        this.setJMenuBar(mb);
+        save.addActionListener(new MenuHandler());
+        add(gamePanel);
+        add(scorePanel, BorderLayout.NORTH);
+        pack();
+        centreOnScreen();
+    }
 
-        do {
-            size = board.getSize();
-            System.out.println("The current size of the board is " + size);
-            System.out.println("What would you like the new size to be?");
-            newSize = input.nextInt();
-            input.nextLine();
-            board.setSize(newSize);
-
-            System.out.println("Your new board looks like this");
-            printBoard(board);
-
-            System.out.println("Are you happy with this? (y/n)");
-            choice = input.nextLine();
-        } while (!choice.equals("y"));
+    // REQUIRES: Game must be a brand new game
+    // MODIFIES: this
+    // EFFECTS: starts the game
+    public void startGame() {
+        game.insertRandomNumber();
+        game.insertRandomNumber();
+        playGame();
     }
 
     // MODIFIES: this
-    // EFFECTS: Allows the user to change the goal of their game.
-    public void changeGoal() {
-        String choice;
-        int goal;
-        int newGoal;
-
-        do {
-            goal = game.getGoal();
-            System.out.println("The current goal is " + goal);
-            System.out.println("What would you like the new goal to be?");
-            newGoal = input.nextInt();
-            input.nextLine();
-            game.setGoal(newGoal);
-
-            System.out.println("The goal is now " + game.getGoal());
-
-            System.out.println("Are you happy with this? (y/n)");
-            choice = input.nextLine();
-        } while (!choice.equals("y"));
-    }
-
-    // EFFECTS: Plays the game following all appropriate rules.
+    // EFFECTS: Closes the menu and showcases the game frame.
     public void playGame() {
-
-        Board board = game.getBoard();
-        game.insertRandomNumber();
-        game.insertRandomNumber();
-
-        printScoreBoard();
-        printBoard(board);
-
-        while (true) {
-            if (!nextTurn()) {
-                break;
-            }
-
-            printScoreBoard();
-            printBoard(board);
-
-            if (game.isGameOver()) {
-                gameOver();
-                break;
-            } else if (game.isGameWon()) {
-                if (!gameWon()) {
-                    break;
-                }
-            }
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: Allows the user to make a move to change the board. Returns true if the user doesn't want to quit
-    //          else returns false.
-    public boolean nextTurn() {
-        String move;
-        System.out.println("Next Move or Quit(q):");
-        move = input.nextLine();
-
-        if (move.equals("r")) {
-            game.moveRight();
-            return true;
-        } else if (move.equals("l")) {
-            game.moveLeft();
-            return true;
-        } else if (move.equals("u")) {
-            game.moveUp();
-            return true;
-        } else if (move.equals("d")) {
-            game.moveDown();
-            return true;
-        } else if (move.equals("q")) {
-            quitGame();
-            return false;
-        } else {
-            System.out.println("Invalid move");
-            return true;
-        }
-    }
-
-    // EFFECTS: Prints out the given board onto the console.
-    public void printBoard(Board board) {
-        Cell cell;
-        int size = board.getSize();
-        int index;
-        for (int row = 0; row < size; row++) {
-            for (int column = 0; column < size; column++) {
-                index = row * size + column;
-                cell = board.getCellAt(index);
-                System.out.print("|");
-                if (cell.isEmpty()) {
-                    System.out.print("     ");
-                } else {
-                    System.out.printf("%5d", cell.getValue());
-                }
-                System.out.print("|");
-            }
-            System.out.print("\n");
-        }
-
-    }
-
-    // MODIFIES: this
-    // EFFECTS: Handles the game over event and allows the user to start a new game if they wish.
-    public void gameOver() {
-        String choice;
-        System.out.println("Game Over");
-        System.out.println("Your final score was " + game.getScore());
-        System.out.println("Would you like to start a new game? (y/n)");
-        choice = input.nextLine();
-        if (choice.equals("y")) {
-            game = new NumberMergeGame();
-            setupGame();
-        } else {
-            System.out.println("Thanks for playing!");
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: Handles the game won event and allows the user to continue with an increased goal.
-    public boolean gameWon() {
-        String choice;
-        int goal = game.getGoal();
-        System.out.println("You won!");
-        System.out.println("Your score was " + game.getScore());
-        System.out.println("Would you like to continue? (y/n)");
-        choice = input.nextLine();
-        if (choice.equals("y")) {
-            game.setGoal(2 * goal);
-            System.out.println("Your new goal is " + game.getGoal());
-            return true;
-        } else {
-            System.out.println("Thanks for playing");
-            return false;
-        }
-    }
-
-    // EFFECTS: Prints out the score board containing the current score as well as moves made.
-    public void printScoreBoard() {
-        int score = game.getScore();
-        int moves = game.getMoves();
-        System.out.println("\n\n______________________________");
-        System.out.printf("%-15s %15s", "|Score: " + score, "Moves: " + moves + "|\n");
-        System.out.println("------------------------------");
-    }
-
-    // EFFECTS: Quits the game and offers to save the game for the player.
-    public void quitGame() {
-        String choice;
-        System.out.println("Would you like to save the game (y/n)? (All unsaved progress will be lost)");
-        choice = input.nextLine();
-        choice = choice.toLowerCase();
-        if (choice.equals("y")) {
-            saveGame();
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: Loads the game from file
-    public void loadGame() {
-        try {
-            game = jsonReader.read();
-            System.out.println("Loaded game from " + JSON_STORE);
-            playGame();
-        } catch (IOException e) {
-            System.out.println("Unable to read from file " + JSON_STORE);
-        }
+        mainMenu.setVisible(false);
+        initializeGameFrame();
+        this.setVisible(true);
+        repaint();
     }
 
     // EFFECTS: Saves the game to file
@@ -256,6 +96,85 @@ public class NumberMergeGameApp {
             System.out.println("Saved game to " + JSON_STORE);
         } catch (IOException e) {
             System.out.println("Unable to save game to " + JSON_STORE);
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS:  frame is centred on desktop
+    private void centreOnScreen() {
+        Dimension scrn = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((scrn.width - getWidth()) / 2, (scrn.height - getHeight()) / 2);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Prints out the game won event clears the board brings user back to main menu
+    private void gameWon() {
+        String won = "You win!\nScore: " + game.getScore() + "\nMoves: " + game.getMoves();
+
+        // Audio from: https://soundbible.com/1003-Ta-Da.html
+        playAudio("./data/Ta_Da.wav");
+
+        JOptionPane.showMessageDialog(new JFrame(), won);
+        mainMenu.setVisible(true);
+        this.setVisible(false);
+        game = new NumberMergeGame();
+        getContentPane().removeAll();
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Prints out the game lost event clears the board brings user back to main menu
+    private void gameOver() {
+        String lose = "You lose!\nScore: " + game.getScore() + "\nMoves: " + game.getMoves();
+
+        // Audio from: https://soundbible.com/1830-Sad-Trombone.html
+        playAudio("./data/Sad_Trombone.wav");
+
+        JOptionPane.showMessageDialog(new JFrame(), lose);
+        mainMenu.setVisible(true);
+        this.setVisible(false);
+        game = new NumberMergeGame();
+        getContentPane().removeAll();
+    }
+
+    // EFFECTS: Plays the given audio file.
+    private void playAudio(String fileName) {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File((fileName)));
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (Exception e) {
+            System.out.println("Failed to play Audio");
+        }
+    }
+
+    // A key handler for the game to handle moves made by user
+    private class KeyHandler extends KeyAdapter {
+
+        // EFFECTS: updates the whole game frame and moves board based on key pressed
+        @Override
+        public void keyPressed(KeyEvent e) {
+            game.keyPressed(e.getKeyCode());
+            gamePanel.repaint();
+            scorePanel.update();
+
+            if (game.isGameWon()) {
+                gameWon();
+            } else if (game.isGameOver()) {
+                gameOver();
+            }
+        }
+    }
+
+    // an Action listener for the game frames menu button
+    private class MenuHandler implements ActionListener {
+
+        // EFFECTS: Performs action based on which button was pressed in menu.
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == save) {
+                saveGame();
+            }
         }
     }
 }

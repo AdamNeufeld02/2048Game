@@ -2,6 +2,7 @@ package model;
 
 import org.json.JSONObject;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -181,6 +182,7 @@ public class NumberMergeGame {
         }
     }
 
+    // EFFECTS: converts the current game to a JSONObject
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         json.put("goal", goal);
@@ -190,6 +192,23 @@ public class NumberMergeGame {
         json.put("board", board.toJson());
 
         return json;
+    }
+
+    // REQUIRES: keycode must be a valid key event key code
+    // MODIFIES: this
+    // EFFECTS: Moves the game according to the given key code
+    public void keyPressed(int keyCode) {
+        if (!isGameOver() && !isGameOver()) {
+            if (keyCode == KeyEvent.VK_UP) {
+                moveUp();
+            } else if (keyCode == KeyEvent.VK_DOWN) {
+                moveDown();
+            } else if (keyCode == KeyEvent.VK_RIGHT) {
+                moveRight();
+            } else if (keyCode == KeyEvent.VK_LEFT) {
+                moveLeft();
+            }
+        }
     }
 
     // REQUIRES row < board.size()

@@ -93,9 +93,9 @@ public class NumberMergeGameApp extends JFrame {
             jsonWriter.open();
             jsonWriter.write(game);
             jsonWriter.close();
-            System.out.println("Saved game to " + JSON_STORE);
+            JOptionPane.showMessageDialog(new JFrame(), "Saved game to " + JSON_STORE);
         } catch (IOException e) {
-            System.out.println("Unable to save game to " + JSON_STORE);
+            JOptionPane.showMessageDialog(new JFrame(), "Unable to save game to " + JSON_STORE);
         }
     }
 

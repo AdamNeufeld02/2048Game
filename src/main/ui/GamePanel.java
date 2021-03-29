@@ -68,6 +68,7 @@ public class GamePanel extends JPanel {
         }
     }
 
+
     // MODIFIES: G
     // EFFECTS: Draws the given string centered in the given coordinates onto g
     private void drawValue(Graphics g, String value, int x, int y) {

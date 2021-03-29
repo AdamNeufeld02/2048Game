@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
+// The Main menu of the Game contains buttons for loading starting and changing the board
 public class MainMenu extends JFrame {
 
     public static final int WIDTH = 600;

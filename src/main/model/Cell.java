@@ -43,6 +43,7 @@ public class Cell {
         return value == 0;
     }
 
+    // EFFECTS: Returns the Cell as a Json object
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         json.put("value", value);

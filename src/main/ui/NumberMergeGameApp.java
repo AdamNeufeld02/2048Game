@@ -166,7 +166,7 @@ public class NumberMergeGameApp extends JFrame {
         }
     }
 
-    // an Action listener for the game frames menu button
+    // An Action listener for the game frames menu button
     private class MenuHandler implements ActionListener {
 
         // EFFECTS: Performs action based on which button was pressed in menu.

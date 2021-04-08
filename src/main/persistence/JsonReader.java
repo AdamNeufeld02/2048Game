@@ -1,5 +1,7 @@
 package persistence;
 
+import exceptions.IndexException;
+import exceptions.SizeException;
 import model.Board;
 import model.NumberMergeGame;
 import org.json.JSONArray;
@@ -69,7 +71,11 @@ public class JsonReader {
         JSONArray jsonArray = jsonObject.getJSONArray("cells");
         int i = 0;
 
-        board.setSize(size);
+        try {
+            board.setSize(size);
+        } catch (SizeException e) {
+            e.printStackTrace();
+        }
 
         for (Object json : jsonArray) {
             JSONObject nextCell = (JSONObject) json;
@@ -82,7 +88,11 @@ public class JsonReader {
     // EFFECTS: parses cells from JSON object and adds it to board
     private void addCell(Board board, JSONObject jsonObject, int index) {
         int value = jsonObject.getInt("value");
-        board.setCell(index, value);
+        try {
+            board.setCell(index, value);
+        } catch (IndexException e) {
+            e.printStackTrace();
+        }
     }
 
 

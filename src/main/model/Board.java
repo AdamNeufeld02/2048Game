@@ -1,13 +1,16 @@
 package model;
 
+import exceptions.IndexException;
+import exceptions.SizeException;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import persistence.Writable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 // Represents a square board of side length size. Each cell contains a value all initialized to be empty.
-public class Board {
+public class Board implements Writable {
     private ArrayList<Cell> cells;      // The list of all cells within a board.
     private int size;                   // The size of one side of the board. All boards are perfect squares.
 
@@ -33,9 +36,11 @@ public class Board {
         return index % size;
     }
 
-    // REQUIRES: index must be less than the length of cells
-    // EFFECTS: returns the cell based at the given index on the board
-    public Cell getCellAt(int index) {
+    // EFFECTS: returns the cell based at the given index on the board or throws exception if index is not on board
+    public Cell getCellAt(int index) throws IndexException {
+        if (!inBounds(index)) {
+            throw new IndexException();
+        }
         return (cells.get(index));
     }
 
@@ -44,9 +49,13 @@ public class Board {
         ArrayList<Cell> emptyCells = new ArrayList<>();
         Cell cell;
         for (int i = 0; i < size * size; i++) {
-            cell = getCellAt(i);
-            if (cell.getValue() == 0) {
-                emptyCells.add(cell);
+            try {
+                cell = getCellAt(i);
+                if (cell.getValue() == 0) {
+                    emptyCells.add(cell);
+                }
+            } catch (IndexException e) {
+                e.printStackTrace();
             }
         }
         return emptyCells;
@@ -57,36 +66,47 @@ public class Board {
         Cell cell;
         int highest = 0;
         for (int i = 0; i < size * size; i++) {
-            cell = getCellAt(i);
-            if (cell.getValue() > highest) {
-                highest = cell.getValue();
+            try {
+                cell = getCellAt(i);
+                if (cell.getValue() > highest) {
+                    highest = cell.getValue();
+                }
+            } catch (IndexException e) {
+                e.printStackTrace();
             }
         }
         return highest;
     }
 
     // Setters
-    public void setSize(int size) {
+    // EFFECTS: Throws SizeException if size is less than 1.
+    public void setSize(int size) throws SizeException {
+        if (size < 1) {
+            throw new SizeException();
+        }
         this.size = size;
         initializeBoard();
     }
 
-    public void setCell(int index, int value) {
+    // EFFECTS Sets the Cell at given index or throws exception if index is not on board.
+    public void setCell(int index, int value) throws IndexException {
         Cell cell = getCellAt(index);
         cell.setValue(value);
     }
 
-    // REQUIRES: both indexes must be within the range of the board
     // MODIFIES: this
     // EFFECTS: swaps the two cells at the given index
-    public void swapCells(int index1, int index2) {
+    public void swapCells(int index1, int index2) throws IndexException {
+        if (!inBounds(index1) || !inBounds(index2)) {
+            throw new IndexException();
+        }
         Collections.swap(cells, index1, index2);
     }
 
-    // REQUIRES: Both indexes must be within the range of the board
     // MODIFIES: this
-    // EFFECTS: Merges the two cells at the given indexes and returns the value as an int
-    public int mergeCells(int index1, int index2) {
+    // EFFECTS: Merges the two cells at the given indexes and returns the value as an int. Or throws IndexException if
+    //          given indexes are not on the board.
+    public int mergeCells(int index1, int index2) throws IndexException {
         Cell cell1 = getCellAt(index1);
         Cell cell2 = getCellAt(index2);
         return  cell1.mergeCells(cell2);
@@ -107,6 +127,7 @@ public class Board {
         return index >= 0 && index < size * size;
     }
 
+    @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         JSONArray jsonArray = new JSONArray();
@@ -120,9 +141,9 @@ public class Board {
         return json;
     }
 
-    // REQUIRES: size > 0
     // MODIFIES: this
-    // EFFECTS: Adds or removes cells until the board contains enough to fill a board of the correct size
+    // EFFECTS: Adds or removes cells until the board contains enough to fill a board of the correct size. Or throws
+    //          Size exception if the size is less than 1.
     private void initializeBoard() {
         if (cells.size() > size * size) {
             removeCells();

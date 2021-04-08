@@ -1,5 +1,6 @@
 package persistence;
 
+import exceptions.IndexException;
 import model.Board;
 import model.Cell;
 import model.NumberMergeGame;
@@ -56,7 +57,9 @@ public class JsonReaderTest {
                 assertEquals(i + 1, cell.getValue());
             }
         } catch (IOException e) {
-            fail("Unexpected Exception");
+            fail("Unexpected IOException");
+        } catch (IndexException e) {
+            fail("Unexpected IndexException.");
         }
     }
 }

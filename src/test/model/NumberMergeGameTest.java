@@ -1,13 +1,13 @@
 package model;
 
+import exceptions.IndexException;
+import exceptions.SizeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NumberMergeGameTest {
     private NumberMergeGame game;
@@ -35,7 +35,11 @@ public class NumberMergeGameTest {
     public void testIsGameOverFullBoard() {
         Board board = game.getBoard();
         for (int i = 0; i < 16; i++) {
-            board.setCell(i, 2);
+            try {
+                board.setCell(i, 2);
+            } catch (IndexException e) {
+                fail("Unexpected IndexException");
+            }
         }
         assertFalse(game.isGameOver());
     }
@@ -44,7 +48,11 @@ public class NumberMergeGameTest {
     public void testIsGameOverFullBoardGameOver() {
         Board board = game.getBoard();
         for (int i = 0; i < 16; i++) {
-            board.setCell(i, i + 1);
+            try {
+                board.setCell(i, i + 1);
+            } catch (IndexException e) {
+                fail("Unexpected IndexException");
+            }
         }
         assertTrue(game.isGameOver());
     }
@@ -53,9 +61,17 @@ public class NumberMergeGameTest {
     public void testIsGameOverVerticalMerges() {
         Board board = game.getBoard();
         for (int i = 0; i < 16; i++) {
-            board.setCell(i, i + 1);
+            try {
+                board.setCell(i, i + 1);
+            } catch (IndexException e) {
+                fail("Unexpected IndexException");
+            }
         }
-        board.setCell(8, 5);
+        try {
+            board.setCell(8, 5);
+        } catch (IndexException e) {
+            fail("Unexpected IndexException");
+        }
 
         assertFalse(game.isGameOver());
     }
@@ -67,12 +83,16 @@ public class NumberMergeGameTest {
 
     @Test
     public void testIsGameWonGameWon() {
-        Board board = game.getBoard();
-        board.setCell(9, 2048);
-        assertTrue(game.isGameWon());
-        game.setGoal(4096);
-        board.setCell(10, 4096);
-        assertTrue(game.isGameWon());
+        try {
+            Board board = game.getBoard();
+            board.setCell(9, 2048);
+            assertTrue(game.isGameWon());
+            game.setGoal(4096);
+            board.setCell(10, 4096);
+            assertTrue(game.isGameWon());
+        } catch (IndexException e) {
+            fail("Unexpected IndexException");
+        }
     }
 
     @Test
@@ -90,11 +110,15 @@ public class NumberMergeGameTest {
         emptyCells = board.getEmptyCells();
 
         for (int i = 0; i < 16; i++) {
-            cell = board.getCellAt(i);
-            if (cell.getValue() == 2) {
-                twos++;
-            } else {
-                fours++;
+            try {
+                cell = board.getCellAt(i);
+                if (cell.getValue() == 2) {
+                    twos++;
+                } else {
+                    fours++;
+                }
+            } catch (IndexException e) {
+                fail("Unexpected IndexException");
             }
         }
 
@@ -106,8 +130,12 @@ public class NumberMergeGameTest {
     @Test
     public void testCheckMergeRow() {
         Board board = game.getBoard();
-        board.setCell(6, 8);
-        board.setCell(7, 8);
+        try {
+            board.setCell(6, 8);
+            board.setCell(7, 8);
+        } catch (IndexException e) {
+            fail("Unexpected IndexException");
+        }
 
         assertTrue(game.checkMergeRow(6, 7));
         assertFalse(game.checkMergeRow(5, 6));
@@ -120,8 +148,12 @@ public class NumberMergeGameTest {
     @Test
     public void testCheckMergeColumn() {
         Board board = game.getBoard();
-        board.setCell(6, 16);
-        board.setCell(10, 16);
+        try {
+            board.setCell(6, 16);
+            board.setCell(10, 16);
+        } catch (IndexException e) {
+            fail("Unexpected IndexException");
+        }
 
         assertTrue(game.checkMergeColumn(6, 10));
         assertFalse(game.checkMergeColumn(2,6));
@@ -136,97 +168,121 @@ public class NumberMergeGameTest {
         Board board = game.getBoard();
         Cell cell;
 
-        board.setCell(0, 4);
-        board.setCell(3, 4);
-        board.setCell(12,2);
-        board.setCell(15, 4);
+        try {
+            board.setCell(0, 4);
+            board.setCell(3, 4);
+            board.setCell(12, 2);
+            board.setCell(15, 4);
 
-        game.moveRight();
+            game.moveRight();
 
-        assertEquals(1, game.getMoves());
-        assertEquals(8, game.getScore());
+            assertEquals(1, game.getMoves());
+            assertEquals(8, game.getScore());
 
-        cell = board.getCellAt(3);
-        assertEquals(8,cell.getValue());
-        cell = board.getCellAt(14);
-        assertEquals(2, cell.getValue());
-        cell = board.getCellAt(15);
-        assertEquals(4, cell.getValue());
+            cell = board.getCellAt(3);
+            assertEquals(8, cell.getValue());
+            cell = board.getCellAt(14);
+            assertEquals(2, cell.getValue());
+            cell = board.getCellAt(15);
+            assertEquals(4, cell.getValue());
+        } catch (IndexException e) {
+            fail("Unexpected IndexException");
+        }
     }
 
     @Test
     public void testSimpleMoveLeft() {
         Board board = game.getBoard();
         Cell cell;
-        board.setCell(0, 4);
-        board.setCell(3, 4);
-        board.setCell(12,2);
-        board.setCell(15, 4);
+        try {
+            board.setCell(0, 4);
+            board.setCell(3, 4);
+            board.setCell(12, 2);
+            board.setCell(15, 4);
 
-        game.moveLeft();
+            game.moveLeft();
 
-        assertEquals(1, game.getMoves());
-        assertEquals(8, game.getScore());
+            assertEquals(1, game.getMoves());
+            assertEquals(8, game.getScore());
 
-        cell = board.getCellAt(0);
-        assertEquals(8,cell.getValue());
-        cell = board.getCellAt(12);
-        assertEquals(2, cell.getValue());
-        cell = board.getCellAt(13);
-        assertEquals(4, cell.getValue());
+            cell = board.getCellAt(0);
+            assertEquals(8, cell.getValue());
+            cell = board.getCellAt(12);
+            assertEquals(2, cell.getValue());
+            cell = board.getCellAt(13);
+            assertEquals(4, cell.getValue());
+        } catch (IndexException e) {
+            fail("Unexpected IndexException");
+        }
     }
 
     @Test
     public void testSimpleMoveUp() {
         Board board = game.getBoard();
         Cell cell;
-        board.setCell(0, 4);
-        board.setCell(3, 4);
-        board.setCell(12,2);
-        board.setCell(15, 4);
+        try {
+            board.setCell(0, 4);
+            board.setCell(3, 4);
+            board.setCell(12, 2);
+            board.setCell(15, 4);
 
-        game.moveUp();
+            game.moveUp();
 
-        assertEquals(1, game.getMoves());
-        assertEquals(8, game.getScore());
+            assertEquals(1, game.getMoves());
+            assertEquals(8, game.getScore());
 
-        cell = board.getCellAt(0);
-        assertEquals(4,cell.getValue());
-        cell = board.getCellAt(4);
-        assertEquals(2, cell.getValue());
-        cell = board.getCellAt(3);
-        assertEquals(8, cell.getValue());
+            cell = board.getCellAt(0);
+            assertEquals(4, cell.getValue());
+            cell = board.getCellAt(4);
+            assertEquals(2, cell.getValue());
+            cell = board.getCellAt(3);
+            assertEquals(8, cell.getValue());
+        } catch (IndexException e) {
+            fail("Unexpected IndexException");
+        }
     }
 
     @Test
     public void testSimpleMoveDown() {
         Board board = game.getBoard();
         Cell cell;
-        board.setCell(0, 4);
-        board.setCell(3, 4);
-        board.setCell(12,2);
-        board.setCell(15, 4);
+        try {
+            board.setCell(0, 4);
+            board.setCell(3, 4);
+            board.setCell(12, 2);
+            board.setCell(15, 4);
 
-        game.moveDown();
+            game.moveDown();
 
-        assertEquals(1, game.getMoves());
-        assertEquals(8, game.getScore());
+            assertEquals(1, game.getMoves());
+            assertEquals(8, game.getScore());
 
-        cell = board.getCellAt(8);
-        assertEquals(4,cell.getValue());
-        cell = board.getCellAt(12);
-        assertEquals(2, cell.getValue());
-        cell = board.getCellAt(15);
-        assertEquals(8, cell.getValue());
+            cell = board.getCellAt(8);
+            assertEquals(4, cell.getValue());
+            cell = board.getCellAt(12);
+            assertEquals(2, cell.getValue());
+            cell = board.getCellAt(15);
+            assertEquals(8, cell.getValue());
+        } catch (IndexException e) {
+            fail("Unexpected IndexException");
+        }
     }
 
     @Test
     public void testMoveRightNoSpace() {
         Board board = game.getBoard();
-        board.setSize(5);
+        try {
+            board.setSize(5);
+        } catch (SizeException e) {
+            fail("Unexpected Exception Thrown.");
+        }
 
         for (int i = 0; i < 5; i ++) {
-            board.setCell(i, i);
+            try {
+                board.setCell(i, i);
+            } catch (IndexException e) {
+                fail("Unexpected IndexException");
+            }
         }
         game.moveRight();
 
@@ -237,10 +293,18 @@ public class NumberMergeGameTest {
     @Test
     public void testMoveLeftNoSpace() {
         Board board = game.getBoard();
-        board.setSize(5);
+        try {
+            board.setSize(5);
+        } catch (SizeException e) {
+            fail("Unexpected Exception Thrown.");
+        }
 
         for (int i = 0; i < 5; i ++) {
-            board.setCell(i, i + 1);
+            try {
+                board.setCell(i, i + 1);
+            } catch (IndexException e) {
+                fail("Unexpected IndexException");
+            }
         }
         game.moveLeft();
 
@@ -251,10 +315,18 @@ public class NumberMergeGameTest {
     @Test
     public void testMoveUpNoSpace() {
         Board board = game.getBoard();
-        board.setSize(5);
+        try {
+            board.setSize(5);
+        } catch (SizeException e) {
+            fail("Unexpected Exception Thrown.");
+        }
 
         for (int i = 0; i < 5; i ++) {
-            board.setCell(i * 5, i + 1);
+            try {
+                board.setCell(i * 5, i + 1);
+            } catch (IndexException e) {
+                fail("Unexpected IndexException");
+            }
         }
         game.moveUp();
 
@@ -265,10 +337,18 @@ public class NumberMergeGameTest {
     @Test
     public void testMoveDownNoSpace() {
         Board board = game.getBoard();
-        board.setSize(5);
+        try {
+            board.setSize(5);
+        } catch (SizeException e) {
+            fail("Unexpected Exception Thrown.");
+        }
 
         for (int i = 0; i < 5; i ++) {
-            board.setCell(i * 5, i + 1);
+            try {
+                board.setCell(i * 5, i + 1);
+            } catch (IndexException e) {
+                fail("Unexpected IndexException");
+            }
         }
         game.moveDown();
 

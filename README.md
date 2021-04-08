@@ -31,3 +31,13 @@ I have played this game before and am interested in what it would take to make. 
 - As a user, I want to be able to view the number of moves I have made in the game.
 - As a user, I want to be able to save my current game.
 - As a user, I want to be able to load my previous game.
+
+## Phase 4: Task 2
+I decided to make the board class robust by making the setSize method throw the SizeException and each of the swapCells 
+mergeCells setCell and getCellAt throw the IndexException.
+
+## Phase 4: Task 3.
+Some refactoring I would do with my design is to create a new class which handles moving the board.
+Currently the NumberMergeGame handles board movements, but I believe that it is a big enough responsibility to require its
+own class. There is also a lot of duplicate code in the code that moves the board and hopefully some of that
+could be abstracted out in the new class.

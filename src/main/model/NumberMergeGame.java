@@ -1,6 +1,8 @@
 package model;
 
+import exceptions.IndexException;
 import org.json.JSONObject;
+import persistence.Writable;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.Random;
 
 // A Game class which holds the current games board and score, moves, and goal. This class can move the board according
 // to the rules within the game.
-public class NumberMergeGame {
+public class NumberMergeGame implements Writable {
     private Board board;        // The board that the game is being played on
     private int score;          // The score of the current game
     private int moves;          // Number of moves that have happened since the start of the game
@@ -60,7 +62,11 @@ public class NumberMergeGame {
         boolean moved = false;
 
         for (int row = 0; row < size; row++) {
-            moved = moveRowRight(row) || moved;
+            try {
+                moved = moveRowRight(row) || moved;
+            } catch (IndexException e) {
+                e.printStackTrace();
+            }
         }
 
         if (moved) {
@@ -76,7 +82,11 @@ public class NumberMergeGame {
         boolean moved = false;
 
         for (int row = 0; row < size; row++) {
-            moved = moveRowLeft(row) || moved;
+            try {
+                moved = moveRowLeft(row) || moved;
+            } catch (IndexException e) {
+                e.printStackTrace();
+            }
         }
 
         if (moved) {
@@ -93,7 +103,11 @@ public class NumberMergeGame {
         boolean moved = false;
 
         for (int column = 0; column < size; column++) {
-            moved = moveColumnUp(column) || moved;
+            try {
+                moved = moveColumnUp(column) || moved;
+            } catch (IndexException e) {
+                e.printStackTrace();
+            }
         }
 
         if (moved) {
@@ -109,7 +123,11 @@ public class NumberMergeGame {
         boolean moved = false;
 
         for (int column = 0; column < size; column++) {
-            moved = moveColumnDown(column) || moved;
+            try {
+                moved = moveColumnDown(column) || moved;
+            } catch (IndexException e) {
+                e.printStackTrace();
+            }
         }
 
         if (moved) {
@@ -160,12 +178,15 @@ public class NumberMergeGame {
         Cell cell1;
         Cell cell2;
         if (board.checkRow(index1, index2) && board.inBounds(index1) && board.inBounds(index2)) {
-            cell1 = board.getCellAt(index1);
-            cell2 = board.getCellAt(index2);
-            return (cell1.getValue() == cell2.getValue());
-        } else {
-            return false;
+            try {
+                cell1 = board.getCellAt(index1);
+                cell2 = board.getCellAt(index2);
+                return (cell1.getValue() == cell2.getValue());
+            } catch (IndexException e) {
+                e.printStackTrace();
+            }
         }
+        return false;
     }
 
     // MODIFIES: this
@@ -174,15 +195,19 @@ public class NumberMergeGame {
         Cell cell1;
         Cell cell2;
         if (board.checkColumn(index1, index2) && board.inBounds(index1) && board.inBounds(index2)) {
-            cell1 = board.getCellAt(index1);
-            cell2 = board.getCellAt(index2);
-            return (cell1.getValue() == cell2.getValue());
-        } else {
-            return false;
+            try {
+                cell1 = board.getCellAt(index1);
+                cell2 = board.getCellAt(index2);
+                return (cell1.getValue() == cell2.getValue());
+            } catch (IndexException e) {
+                e.printStackTrace();
+            }
         }
+        return false;
     }
 
     // EFFECTS: converts the current game to a JSONObject
+    @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         json.put("goal", goal);
@@ -215,7 +240,7 @@ public class NumberMergeGame {
     // MODIFIES: this
     // EFFECTS: moves the given row to the right merging where appropriate. returns true if any cells moved or were
     //          merged, else returns false.
-    private boolean moveRowRight(int row) {
+    private boolean moveRowRight(int row) throws IndexException {
         int size = board.getSize();
         int index;
         int emptyCells = 0;
@@ -247,7 +272,7 @@ public class NumberMergeGame {
     // MODIFIES: this
     // EFFECTS: moves the given row to the left merging where appropriate. returns true if any cells moved or were
     //          merged, else returns false.
-    private boolean moveRowLeft(int row) {
+    private boolean moveRowLeft(int row) throws IndexException {
         int size = board.getSize();
         int index;
         int emptyCells = 0;
@@ -279,7 +304,7 @@ public class NumberMergeGame {
     // MODIFIES: this
     // EFFECTS: moves the given column to the up merging where appropriate. returns true if any cells moved or were
     //          merged, else returns false.
-    private boolean moveColumnUp(int column) {
+    private boolean moveColumnUp(int column) throws IndexException {
         int size = board.getSize();
         int index;
         int emptyCells = 0;
@@ -311,7 +336,7 @@ public class NumberMergeGame {
     // MODIFIES: this
     // EFFECTS: moves the given column to the down merging where appropriate. returns true if any cells moved or were
     //          merged, else returns false.
-    private boolean moveColumnDown(int column) {
+    private boolean moveColumnDown(int column) throws IndexException {
         int size = board.getSize();
         int index;
         int emptyCells = 0;

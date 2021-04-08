@@ -1,5 +1,6 @@
 package ui;
 
+import exceptions.IndexException;
 import model.Board;
 import model.Cell;
 import model.NumberMergeGame;
@@ -45,8 +46,12 @@ public class GamePanel extends JPanel {
         Cell cell;
         for (int row = 0; row < size; row++) {
             for (int column = 0; column < size; column++) {
-                cell = board.getCellAt(row * size + column);
-                drawCell(g, cell, row, column);
+                try {
+                    cell = board.getCellAt(row * size + column);
+                    drawCell(g, cell, row, column);
+                } catch (IndexException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

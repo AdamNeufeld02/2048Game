@@ -1,5 +1,7 @@
 package persistence;
 
+import exceptions.IndexException;
+import exceptions.SizeException;
 import jdk.nashorn.internal.ir.debug.JSONWriter;
 import model.Board;
 import model.Cell;
@@ -78,7 +80,11 @@ public class JsonWriterTest {
                 assertEquals(i + 1, cell.getValue());
             }
         } catch (IOException e) {
-            fail("Unexpected Exception");
+            fail("Unexpected IOException");
+        } catch (SizeException e) {
+            fail("Unexpected SizeException Thrown.");
+        } catch (IndexException e) {
+            fail("Unexpected IndexException.");
         }
     }
 }

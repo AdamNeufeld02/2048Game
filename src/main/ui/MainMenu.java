@@ -1,5 +1,6 @@
 package ui;
 
+import exceptions.SizeException;
 import persistence.JsonReader;
 
 import javax.swing.*;
@@ -65,6 +66,8 @@ public class MainMenu extends JFrame {
             gameApp.getGame().getBoard().setSize(size);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(new JFrame(), "Please enter an integer.");
+        } catch (SizeException e) {
+            JOptionPane.showMessageDialog(new JFrame(), "Size must not be less than 1");
         }
     }
 

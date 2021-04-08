@@ -2,10 +2,11 @@ package model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import persistence.Writable;
 
 // Class representation of a single cell in a game. The value of a cell is always 2 or greater.
 // A cell with a value of 0 is considered empty.
-public class Cell {
+public class Cell implements Writable {
     private int value;      // The value held within a single cell.
 
     // EFFECTS: Creates an empty cell
@@ -44,6 +45,7 @@ public class Cell {
     }
 
     // EFFECTS: Returns the Cell as a Json object
+    @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         json.put("value", value);
